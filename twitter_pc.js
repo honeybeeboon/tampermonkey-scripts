@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Twitter Promotion Filter Ver
 // @name:ja      Twitterプロモーションフィルター PC
-// @version      1.0.0
+// @version      1.0.1
 // @description  Hides promotion on twitter
 // @description:ja Twitterのプロモーションを隠します
 // @match        https://twitter.com/*
@@ -93,26 +93,11 @@
       .forEach((el) => {
         el.style.display = "none";
       });
-    document
-      .querySelectorAll(
-        ".css-175oi2r.r-1awozwy.r-18u37iz.r-16y2uox.r-w7s2jr.r-3pj75a"
-      )
-      .forEach((element) => {
-        if (
-          element.textContent.includes("求人") ||
-          element.textContent.includes("収益化") ||
-          element.textContent.includes("広告") ||
-          element.textContent.includes("認証済み組織") ||
-          element.textContent.includes("ビジネス") ||
-          element.textContent.includes("チャット") ||
-          element.textContent.includes("Creator Studio") ||
-          element.textContent.includes("クリエイター")
-        ) {
-          element.style.display = "none";
-        }
-      });
 
     document.querySelector('a[aria-label="Grok"]').style.display = "none";
+    document.querySelector('a[aria-label="フォローする"]').style.display =
+      "none";
+
     // おすすめを消す＋フォロー中を選ぶ（安全版）
     const tablist = document.querySelector('[role="tablist"]');
     if (tablist) {

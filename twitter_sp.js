@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Twitter Promotion Filter Ver
 // @name:ja      Twitterプロモーションフィルター SP
-// @version      1.0.0
+// @version      1.0.1
 // @description  Hides promotion on twitter
 // @description:ja Twitterのプロモーションを隠します
 // @match        https://x.com/*
@@ -93,7 +93,8 @@
           element.textContent.includes("ビジネス") ||
           element.textContent.includes("チャット") ||
           element.textContent.includes("Creator Studio") ||
-          element.textContent.includes("クリエイター")
+          element.textContent.includes("クリエイター") ||
+          element.textContent.includes("フォローする")
         ) {
           element.style.display = "none";
         }
