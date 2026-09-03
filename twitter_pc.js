@@ -24,7 +24,7 @@
   var root = document.getElementById("react-root") || document.body;
   var check = function () {
     var targets = root.querySelectorAll(
-        '[tabindex="0"][data-testid]:not([tpf-checked])'
+        '[tabindex="0"][data-testid]:not([tpf-checked])',
       ),
       elems,
       i,
@@ -88,7 +88,7 @@
       });
     document
       .querySelectorAll(
-        ".css-175oi2r.r-105ug2t.r-1867qdf.r-1upvrn0.r-13awgt0.r-1ce3o0f.r-1udh08x.r-u8s1d.r-13qz1uu.r-173mn98.r-1e5uvyk.r-6026j.r-1xsrhxi.r-rs99b7.r-12jitg0"
+        ".css-175oi2r.r-105ug2t.r-1867qdf.r-1upvrn0.r-13awgt0.r-1ce3o0f.r-1udh08x.r-u8s1d.r-13qz1uu.r-173mn98.r-1e5uvyk.r-6026j.r-1xsrhxi.r-rs99b7.r-12jitg0",
       )
       .forEach((el) => {
         el.style.display = "none";
@@ -96,17 +96,60 @@
     // プロフィール > おすすめ
     document
       .querySelectorAll(
-        ".css-175oi2r.r-14lw9ot.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-1ifxtd0.r-1udh08x"
+        ".css-175oi2r.r-14lw9ot.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-1ifxtd0.r-1udh08x",
       )
       .forEach((el) => {
         el.style.display = "none";
+      });
+
+    // 「プレミアムにサブスクライブ」を非表示
+    document
+      .querySelectorAll('aside[aria-label="プレミアムにサブスクライブ"]')
+      .forEach((el) => {
+        el.style.setProperty("display", "none", "important");
+      });
+
+    // 「本日のニュース」全体を非表示
+    document.querySelectorAll('h2[role="heading"]').forEach((h2) => {
+      if (h2.textContent.trim().startsWith("本日のニュース")) {
+        const newsBlock = h2.parentElement?.parentElement;
+        if (newsBlock) {
+          newsBlock.style.setProperty("display", "none", "important");
+        }
+      }
+    });
+
+    // 「速報」全体を非表示
+    document.querySelectorAll('h1[role="heading"]').forEach((h1) => {
+      if (h1.textContent.trim() === "速報") {
+        const newsBlock = h1.parentElement?.parentElement?.parentElement;
+        if (newsBlock) {
+          newsBlock.style.setProperty("display", "none", "important");
+        }
+      }
+    });
+
+    // Grokボタンを非表示
+    document.querySelectorAll('button[aria-label="Grok"]').forEach((el) => {
+      el.style.setProperty("display", "none", "important");
+    });
+
+    // メニュー内の「設定とプライバシー」以外を非表示
+    document
+      .querySelectorAll('[role="menu"] a[role="link"]')
+      .forEach((link) => {
+        const text = link.textContent.trim();
+
+        if (text !== "設定とプライバシー") {
+          link.parentElement?.style.setProperty("display", "none", "important");
+        }
       });
 
     document.querySelector('a[aria-label="Grok"]').style.display = "none";
     document.querySelector('a[aria-label="フォローする"]').style.display =
       "none";
     document.querySelector(
-      'a[aria-label="クリエイタースタジオ"]'
+      'a[aria-label="クリエイタースタジオ"]',
     ).style.display = "none";
 
     // おすすめを消す＋フォロー中を選ぶ（安全版）
