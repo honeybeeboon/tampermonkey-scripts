@@ -42,6 +42,16 @@
           continue topfor;
         }
       }
+      /*
+            elems=targets[i].querySelectorAll('div:last-child > svg[viewBox="0 0 24 24"]:first-child + :last-child > span:last-child'); //Change here for other language (e.g. '(...) > span:first-child' for English)
+            for(j=0,n=elems.length;j<n;j++){
+                if(elems[j].textContent.slice(-7)==="プロモーション"){ //Change here for other language (e.g. slice(0,8)==="Promoted" for English)
+                    console.log("TPF: Hit");
+                    targets[i].parentNode.removeChild(targets[i]);
+                    continue topfor;
+                }
+            }
+            */
       // ★追加（復活）：テキスト「広告」で判定（あなたのHTMLに一致）
       // 「広告」はヘッダ付近のどこかに単独で出るので、article内の div[dir="ltr"] を見て一致チェック
       elems = targets[i].querySelectorAll('div[dir="ltr"]');
@@ -90,7 +100,11 @@
       .forEach((el) => {
         el.style.setProperty("display", "none", "important");
       });
-
+    document.querySelectorAll('[role="tab"]').forEach((tab) => {
+      if (tab.textContent.trim() === "MLB") {
+        tab.closest('[role="presentation"]')?.remove();
+      }
+    });
     document.querySelector('a[aria-label="Grok"]').style.display = "none";
     // おすすめを消す＋フォロー中を選ぶ（安全版）
     const tablist = document.querySelector('[role="tablist"]');

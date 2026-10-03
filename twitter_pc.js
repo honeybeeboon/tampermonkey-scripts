@@ -101,6 +101,13 @@
       .forEach((el) => {
         el.style.display = "none";
       });
+    document
+      .querySelectorAll(
+        ".css-g5y9jx.r-14lw9ot.r-jxzhtn.r-1867qdf.r-1phboty.r-rs99b7.r-1ifxtd0.r-1udh08x",
+      )
+      .forEach((el) => {
+        el.style.setProperty("display", "none", "important");
+      });
 
     // 「プレミアムにサブスクライブ」を非表示
     document
