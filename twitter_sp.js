@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Twitter Promotion Filter Ver
 // @name:ja      Twitterプロモーションフィルター SP
-// @version      1.0.0
+// @version      1.0.2
 // @description  Hides promotion on twitter
 // @description:ja Twitterのプロモーションを隠します
 // @match        https://x.com/*
@@ -31,6 +31,7 @@
       m,
       n;
     topfor: for (i = 0, m = targets.length; i < m; i++) {
+      // 1. 従来のSVGパス判定
       elems = targets[i].getElementsByTagName("path");
       for (j = 0, n = elems.length; j < n; j++) {
         if (
@@ -42,22 +43,42 @@
           continue topfor;
         }
       }
-      /*
-            elems=targets[i].querySelectorAll('div:last-child > svg[viewBox="0 0 24 24"]:first-child + :last-child > span:last-child'); //Change here for other language (e.g. '(...) > span:first-child' for English)
-            for(j=0,n=elems.length;j<n;j++){
-                if(elems[j].textContent.slice(-7)==="プロモーション"){ //Change here for other language (e.g. slice(0,8)==="Promoted" for English)
-                    console.log("TPF: Hit");
-                    targets[i].parentNode.removeChild(targets[i]);
-                    continue topfor;
-                }
-            }
-            */
-      // ★追加（復活）：テキスト「広告」で判定（あなたのHTMLに一致）
-      // 「広告」はヘッダ付近のどこかに単独で出るので、article内の div[dir="ltr"] を見て一致チェック
-      elems = targets[i].querySelectorAll('div[dir="ltr"]');
+
+      // 2. テキスト「広告」「Ad」「プロモーション」単独一致判定
+      elems = targets[i].querySelectorAll('div[dir="ltr"], span');
       for (j = 0, n = elems.length; j < n; j++) {
-        if ((elems[j].textContent || "").trim() === "広告") {
-          console.log("TPF: Hit (text=広告)");
+        var txt = (elems[j].textContent || "").trim();
+        if (txt === "広告" || txt === "Ad" || txt === "プロモーション") {
+          console.log("TPF: Hit (text=" + txt + ")");
+          targets[i].setAttribute("tpf-checked", "hidden");
+          continue topfor;
+        }
+      }
+
+      // 3. 広告計測用ピクセル（placementTracking内のtop-impression-pixel）判定
+      var trackingWrap = targets[i].closest(
+        '[data-testid="placementTracking"]',
+      );
+      if (
+        trackingWrap &&
+        trackingWrap.querySelector('[data-testid="top-impression-pixel"]')
+      ) {
+        console.log("TPF: Hit (impression-pixel)");
+        targets[i].setAttribute("tpf-checked", "hidden");
+        continue topfor;
+      }
+
+      // 4. 「Ad from 〜」「〜からの広告」や広告用パラメータ(twclid=)判定
+      elems = targets[i].getElementsByTagName("a");
+      for (j = 0, n = elems.length; j < n; j++) {
+        var linkText = (elems[j].textContent || "").trim();
+        var href = elems[j].getAttribute("href") || "";
+        if (
+          linkText.startsWith("Ad from ") ||
+          linkText.endsWith("からの広告") ||
+          href.includes("twclid=")
+        ) {
+          console.log("TPF: Hit (Ad link)");
           targets[i].setAttribute("tpf-checked", "hidden");
           continue topfor;
         }
@@ -65,6 +86,19 @@
 
       targets[i].setAttribute("tpf-checked", "");
     }
+
+    // ★新規追加：プッシュ通知などのインラインプロンプトを枠・閉じるボタンごと非表示
+    document
+      .querySelectorAll('[data-testid="inlinePrompt"]')
+      .forEach((prompt) => {
+        const container =
+          prompt.closest('[data-testid="cellInnerDiv"] > div') ||
+          prompt.parentElement;
+        if (container) {
+          container.style.setProperty("display", "none", "important");
+        }
+      });
+
     document
       .querySelectorAll('a[href="/i/premium_sign_up"]')
       .forEach((element) => {
@@ -94,18 +128,26 @@
     document
       .querySelector('a[href^="https://ads.x.com/"]')
       ?.style.setProperty("display", "none", "important");
+
     // タブの＋ボタンを非表示
     document
       .querySelectorAll(".css-g5y9jx.r-1h3ijdo.r-bt5hs4")
       .forEach((el) => {
         el.style.setProperty("display", "none", "important");
       });
+
     document.querySelectorAll('[role="tab"]').forEach((tab) => {
-      if (tab.textContent.trim() === "MLB") {
+      const text = tab.textContent.trim();
+
+      if (text === "MLB" || text === "野球") {
         tab.closest('[role="presentation"]')?.remove();
       }
     });
-    document.querySelector('a[aria-label="Grok"]').style.display = "none";
+
+    document
+      .querySelector('a[aria-label="Grok"]')
+      ?.style.setProperty("display", "none");
+
     // おすすめを消す＋フォロー中を選ぶ（安全版）
     const tablist = document.querySelector('[role="tablist"]');
     if (tablist) {
