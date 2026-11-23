@@ -148,6 +148,26 @@
       .querySelector('a[aria-label="Grok"]')
       ?.style.setProperty("display", "none");
 
+    // ダイレクトメッセージ（DM）を非表示
+    document
+      .querySelector('[data-testid="AppTabBar_DirectMessage_Link"]')
+      ?.style.setProperty("display", "none", "important");
+
+    // 通話を非表示
+    document
+      .querySelector('a[href="/i/calls"]')
+      ?.style.setProperty("display", "none", "important");
+
+    // リストを非表示
+    document.querySelectorAll('a[href$="/lists"]').forEach((element) => {
+      element.style.setProperty("display", "none", "important");
+    });
+
+    // フォローするを非表示
+    document
+      .querySelector('a[href="/i/follow_people"]')
+      ?.style.setProperty("display", "none", "important");
+
     // おすすめを消す＋フォロー中を選ぶ（安全版）
     const tablist = document.querySelector('[role="tablist"]');
     if (tablist) {
